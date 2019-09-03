@@ -24,7 +24,7 @@ public class PerfilDAO {
         ResultSet rs;
         List perfis;
         Connection con = DriverManager.getConnection(""
-                + "jdbc:mysql://localhost:3306/alocar_java?useSSL=false", "root", "");
+                + "jdbc:mysql://localhost:3306/alocar_java?useSSL=false&useTimezone = true & serverTimezone = UTC", "root", "root");
         try (Statement stmt = con.createStatement()) {
             if (!(arg.isEmpty()) && !" ".equals(arg)) {
                 rs = stmt.executeQuery("SELECT * FROM alocar_java.perfil "
@@ -55,11 +55,8 @@ public class PerfilDAO {
     
     public void Inserir(Perfil perfil) throws SQLException {
         PreparedStatement stmt;
-        try (Connection con = DriverManager.getConnection(""
-                + "jdbc:mysql://localhost:3306/alocar_java?useSSL=false", "root", "")) {
-            String sql = "INSERT INTO alocar_java.perfil ("
-                    + "nome_perfil "
-                    + "VALUES (?);";
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/alocar_java?useSSL=false&useTimezone = true & serverTimezone = UTC", "root", "root")) {
+            String sql = "INSERT INTO alocar_java.perfil (nome_perfil) VALUES (?);";
             //11 campos (Matricula é auto_increment)
             stmt = con.prepareStatement(sql);
             stmt.setString(1, perfil.getNomePerfil());
@@ -69,4 +66,26 @@ public class PerfilDAO {
         stmt.close();
     }
     
+    public void Alterar (Perfil perfil) throws SQLException{
+        PreparedStatement stmt;
+        try(Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/alocar_java?useSSL=false&useTimezone = true & serverTimezone = UTC", "root", "root")){
+            String sql = "UPDATE alocar_java.perfil SET nome_perfil = ? WHERE id_perfil = ?";
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, perfil.getNomePerfil());
+            stmt.setInt(2, perfil.getIdPerfil());
+            stmt.execute();
+        }
+        stmt.close();
+    }
+    
+    public void Deletar(Integer id) throws SQLException{
+        PreparedStatement stmt;
+        try(Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/alocar_java?useSSL=false&useTimezone = true & serverTimezone = UTC", "root", "root")){
+            String sql = "DELETE FROM alocar_java.perfil WHERE id_perfil = ?";
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, id);
+            stmt.execute();
+        }
+        stmt.close();
+    }
 }
